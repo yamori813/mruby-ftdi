@@ -47,6 +47,14 @@ static mrb_value mrb_ftdi_init(mrb_state *mrb, mrb_value self)
   return self;
 }
 
+static mrb_value mrb_ftdi_baudrate(mrb_state *mrb, mrb_value self)
+{
+  mrb_ftdi_data *data = DATA_PTR(self);
+  mrb_int rate;
+  mrb_get_args(mrb, "i", &rate);
+  ftdi_set_baudrate(&data->ftdic, rate);
+}
+
 #define MAXBUF 1024
 
 static mrb_value mrb_ftdi_write(mrb_state *mrb, mrb_value self)
@@ -82,6 +90,7 @@ void mrb_mruby_ftdi_gem_init(mrb_state *mrb)
   struct RClass *ftdi;
   ftdi = mrb_define_class(mrb, "Ftdi", mrb->object_class);
   mrb_define_method(mrb, ftdi, "initialize", mrb_ftdi_init, MRB_ARGS_REQ(2));
+  mrb_define_method(mrb, ftdi, "baudrate", mrb_ftdi_baudrate, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, ftdi, "write", mrb_ftdi_write, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, ftdi, "close", mrb_ftdi_close, MRB_ARGS_NONE());
   DONE;
